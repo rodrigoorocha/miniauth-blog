@@ -1,8 +1,10 @@
+using MiniAuth.Application;
 using MiniAuth.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DI — registra Infrastructure (DbContext, Repositories)
+// DI — registra Application (Services) e Infrastructure (DbContext, Repositories)
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddControllers();
