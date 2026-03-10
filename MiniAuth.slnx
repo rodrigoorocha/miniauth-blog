@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MiniAuth.Api/MiniAuth.Api.csproj" />
+    <Project Path="src/MiniAuth.Application/MiniAuth.Application.csproj" />
+    <Project Path="src/MiniAuth.Domain/MiniAuth.Domain.csproj" />
+    <Project Path="src/MiniAuth.Infrastructure/MiniAuth.Infrastructure.csproj" />
+    <Project Path="src/MiniAuth.Worker/MiniAuth.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MiniAuth.IntegrationTests/MiniAuth.IntegrationTests.csproj" />
+    <Project Path="tests/MiniAuth.UnitTests/MiniAuth.UnitTests.csproj" />
+  </Folder>
+</Solution>
