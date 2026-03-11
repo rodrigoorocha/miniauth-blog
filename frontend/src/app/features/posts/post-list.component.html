@@ -1,0 +1,46 @@
+<div class="min-h-screen bg-gray-100">
+  <!-- Header -->
+  <header class="bg-white shadow-sm">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold">MiniAuth Blog</h1>
+      <div class="flex gap-3">
+        <a routerLink="/posts/new" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm">
+          Novo Post
+        </a>
+        <button (click)="logout()" class="text-gray-600 hover:text-red-600 text-sm">
+          Sair
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Busca -->
+  <div class="max-w-4xl mx-auto px-4 mt-6">
+    <input
+      type="text"
+      (input)="onSearch($event)"
+      placeholder="Buscar posts por título..."
+      class="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <!-- Lista de Posts -->
+  <!-- Signal se lê com () — loading() em vez de loading, posts() em vez de posts -->
+  <div class="max-w-4xl mx-auto px-4 mt-4 pb-8">
+    @if (loading()) {
+      <p class="text-center text-gray-500 mt-8">Carregando...</p>
+    } @else if (posts().length === 0) {
+      <p class="text-center text-gray-500 mt-8">Nenhum post encontrado.</p>
+    } @else {
+      @for (post of posts(); track post.id) {
+        <a [routerLink]="['/posts', post.id]" class="block bg-white rounded-lg shadow-sm p-6 mb-4 hover:shadow-md transition-shadow">
+          <h2 class="text-lg font-semibold">{{ post.title }}</h2>
+          <p class="text-gray-500 text-sm mt-1">
+            por {{ post.authorName }} &bull; {{ post.createdAt | date:'dd/MM/yyyy' }}
+          </p>
+          <p class="text-gray-700 mt-2 line-clamp-2">{{ post.content }}</p>
+        </a>
+      }
+    }
+  </div>
+</div>

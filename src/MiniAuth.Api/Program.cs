@@ -57,6 +57,17 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
+// CORS — permite o frontend Angular chamar a API
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -97,6 +108,9 @@ if (app.Environment.IsDevelopment())
 
 // Middleware de erros — captura exceptions e converte pra HTTP status codes
 app.UseMiddleware<ExceptionMiddleware>();
+
+// CORS deve vir antes de Authentication/Authorization
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
