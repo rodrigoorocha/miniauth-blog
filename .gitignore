@@ -18,5 +18,9 @@ appsettings.Development.json
 Thumbs.db
 .DS_Store
 
+## Angular
+frontend/README.md
+
 ## Claude
 .claude/
+PROMPT_MINI_PROJECT.md
