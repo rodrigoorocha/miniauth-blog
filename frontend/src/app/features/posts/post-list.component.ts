@@ -6,11 +6,12 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { PostService } from '../../core/services/post.service';
 import { AuthService } from '../../core/services/auth.service';
 import { PostDto } from '../../core/models/post.model';
+import { PostCreateComponent } from './post-create.component';
 
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe, PostCreateComponent],
   templateUrl: './post-list.component.html',
 })
 export class PostListComponent implements OnInit, OnDestroy {
@@ -19,6 +20,10 @@ export class PostListComponent implements OnInit, OnDestroy {
   // Sem Signal (variável normal), o Angular 21 zoneless NÃO detecta a mudança
   posts = signal<PostDto[]>([]);
   loading = signal(true);
+
+  // Controla se o modal de criar post tá aberto ou fechado
+  // No React seria: const [showModal, setShowModal] = useState(false)
+  showCreateModal = signal(false);
 
   // Tubo de comunicação: o input de busca joga texto aqui com .next()
   private _searchSubject = new Subject<string>();
@@ -68,13 +73,6 @@ export class PostListComponent implements OnInit, OnDestroy {
   }
 
   // Busca inicial: traz todos os posts sem filtro
-  // Por baixo dos panos, this._postService.list() faz isso:
-  // GET http://localhost:5167/api/posts?page=0&size=20&isPublished=true
-  //
-  // É o equivalente no React a:
-  // fetch("http://localhost:5167/api/posts?page=0&size=20&isPublished=true")
-  //   .then(res => res.json())
-  //   .then(result => { setPosts(result.data); setLoading(false); })
   loadPosts(): void {
     this.loading.set(true);
     this._postService.list().subscribe({
@@ -86,6 +84,22 @@ export class PostListComponent implements OnInit, OnDestroy {
         this.loading.set(false);
       },
     });
+  }
+
+  // Abre o modal de criar post
+  openCreateModal(): void {
+    this.showCreateModal.set(true);
+  }
+
+  // Fecha o modal (clicou no X, fundo escuro, ou cancelou)
+  closeCreateModal(): void {
+    this.showCreateModal.set(false);
+  }
+
+  // Post criado com sucesso → fecha o modal e recarrega a lista
+  onPostCreated(): void {
+    this.showCreateModal.set(false);
+    this.loadPosts();
   }
 
   logout(): void {

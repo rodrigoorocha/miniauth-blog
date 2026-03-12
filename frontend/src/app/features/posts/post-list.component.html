@@ -4,9 +4,12 @@
     <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
       <h1 class="text-xl font-bold">MiniAuth Blog</h1>
       <div class="flex gap-3">
-        <a routerLink="/posts/new" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm">
+        <button
+          (click)="openCreateModal()"
+          class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm"
+        >
           Novo Post
-        </a>
+        </button>
         <button (click)="logout()" class="text-gray-600 hover:text-red-600 text-sm">
           Sair
         </button>
@@ -44,3 +47,17 @@
     }
   </div>
 </div>
+
+<!-- Modal de Criar Post -->
+<!-- @if = só renderiza o componente quando showCreateModal() é true -->
+<!-- (closed) e (created) escutam os @Output do PostCreateComponent -->
+<!--
+  No React seria:
+  {showModal && <PostCreate onClose={() => setShowModal(false)} onCreated={() => { setShowModal(false); loadPosts(); }} />}
+-->
+@if (showCreateModal()) {
+  <app-post-create
+    (closed)="closeCreateModal()"
+    (created)="onPostCreated()"
+  />
+}
