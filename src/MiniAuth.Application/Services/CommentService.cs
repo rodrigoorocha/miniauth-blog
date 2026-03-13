@@ -12,15 +12,18 @@ public class CommentService : ICommentService
     private readonly ICommentRepository _commentRepository;
     private readonly IPostRepository _postRepository;
     private readonly ICurrentUser _currentUser;
+    private readonly IEventPublisher _eventPublisher;
 
     public CommentService(
         ICommentRepository commentRepository,
         IPostRepository postRepository,
-        ICurrentUser currentUser)
+        ICurrentUser currentUser,
+        IEventPublisher eventPublisher)
     {
         _commentRepository = commentRepository;
         _postRepository = postRepository;
         _currentUser = currentUser;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<CommentDto> CreateAsync(Guid postId, CreateCommentRequest request, CancellationToken ct = default)
@@ -37,6 +40,16 @@ public class CommentService : ICommentService
 
         _commentRepository.Add(comment);
         await _commentRepository.SaveChangesAsync(ct);
+
+        // Publica evento pro Worker enviar email ao autor do post
+        await _eventPublisher.PublishAsync(new Domain.Events.CommentCreatedEvent
+        {
+            CommentId = comment.Id,
+            PostId = post.Id,
+            PostTitle = post.Title,
+            PostAuthorEmail = post.Author?.Email ?? "",
+            CommenterName = _currentUser.FullName
+        }, ct);
 
         return CommentDto.FromEntity(comment);
     }
