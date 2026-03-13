@@ -16,7 +16,24 @@
     } @else {
       <!-- Post completo -->
       <article class="bg-white rounded-lg shadow-sm p-8 mb-6">
-        <h1 class="text-2xl font-bold">{{ post()!.title }}</h1>
+        <div class="flex justify-between items-start">
+          <h1 class="text-2xl font-bold">{{ post()!.title }}</h1>
+          <!-- Botões de ação do post -->
+          <div class="flex gap-2">
+            <button
+              (click)="openEditModal()"
+              class="text-blue-600 hover:text-blue-800 text-sm"
+            >
+              Editar
+            </button>
+            <button
+              (click)="confirmDelete()"
+              class="text-red-500 hover:text-red-700 text-sm"
+            >
+              Excluir
+            </button>
+          </div>
+        </div>
         <p class="text-gray-500 text-sm mt-2">
           por {{ post()!.authorName }} &bull; {{ post()!.createdAt | date:'dd/MM/yyyy HH:mm' }}
         </p>
@@ -24,6 +41,30 @@
           {{ post()!.content }}
         </div>
       </article>
+
+      <!-- Popup de confirmação de exclusão -->
+      @if (showDeleteConfirm()) {
+        <div class="fixed inset-0 bg-black/50 z-40 flex items-center justify-center">
+          <div class="bg-white rounded-xl shadow-xl p-6 max-w-sm mx-4">
+            <h3 class="text-lg font-bold mb-2">Excluir post?</h3>
+            <p class="text-gray-600 text-sm mb-4">Essa ação não pode ser desfeita.</p>
+            <div class="flex gap-3 justify-end">
+              <button
+                (click)="cancelDelete()"
+                class="px-4 py-2 text-gray-600 hover:text-gray-900 text-sm"
+              >
+                Cancelar
+              </button>
+              <button
+                (click)="deletePost()"
+                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm"
+              >
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
+      }
 
       <!-- Seção de Comentários -->
       <section class="bg-white rounded-lg shadow-sm p-6">
@@ -40,7 +81,15 @@
               <div class="border-b pb-4 last:border-b-0">
                 <div class="flex justify-between items-start">
                   <p class="text-sm font-medium">{{ comment.authorName }}</p>
-                  <p class="text-xs text-gray-400">{{ comment.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+                  <div class="flex items-center gap-3">
+                    <p class="text-xs text-gray-400">{{ comment.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+                    <button
+                      (click)="deleteComment(comment.id)"
+                      class="text-red-400 hover:text-red-600 text-xs"
+                    >
+                      Excluir
+                    </button>
+                  </div>
                 </div>
                 <p class="text-gray-700 mt-1">{{ comment.content }}</p>
               </div>
@@ -72,3 +121,12 @@
     }
   </div>
 </div>
+
+<!-- Modal de edição -->
+@if (showEditModal()) {
+  <app-post-edit
+    [post]="post()!"
+    (closed)="closeEditModal()"
+    (updated)="onPostUpdated()"
+  />
+}

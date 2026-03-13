@@ -51,4 +51,8 @@ export class PostService {
   addComment(postId: string, request: CreateCommentRequest): Observable<CommentDto> {
     return this._http.post<CommentDto>(`${this.API_URL}/posts/${postId}/comments`, request);
   }
+
+  deleteComment(postId: string, commentId: string): Observable<void> {
+    return this._http.delete<void>(`${this.API_URL}/posts/${postId}/comments/${commentId}`);
+  }
 }

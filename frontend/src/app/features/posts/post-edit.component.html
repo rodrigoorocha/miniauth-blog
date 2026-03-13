@@ -1,0 +1,79 @@
+<!-- Fundo escuro (backdrop) -->
+<div
+  class="fixed inset-0 bg-black/50 z-40 flex items-start justify-center pt-20"
+  (click)="close()"
+>
+  <!-- Modal -->
+  <div
+    class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Header -->
+    <div class="flex justify-between items-center px-6 py-4 border-b">
+      <h2 class="text-lg font-bold">Editar post</h2>
+      <button
+        (click)="close()"
+        class="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+      >
+        &times;
+      </button>
+    </div>
+
+    <!-- Formulário -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-6">
+      @if (errorMessage()) {
+        <div class="bg-red-50 text-red-600 px-4 py-3 rounded-lg mb-4 text-sm">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="mb-4">
+        <input
+          type="text"
+          formControlName="title"
+          placeholder="Título do post..."
+          class="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
+        />
+        @if (form.get('title')?.touched && form.get('title')?.invalid) {
+          <p class="text-red-500 text-xs mt-1">
+            @if (form.get('title')?.hasError('required')) {
+              Título é obrigatório.
+            } @else if (form.get('title')?.hasError('minlength')) {
+              Título deve ter pelo menos 3 caracteres.
+            }
+          </p>
+        }
+      </div>
+
+      <div class="mb-4">
+        <textarea
+          formControlName="content"
+          rows="6"
+          placeholder="Conteúdo do post..."
+          class="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
+        ></textarea>
+        @if (form.get('content')?.touched && form.get('content')?.invalid) {
+          <p class="text-red-500 text-xs mt-1">
+            @if (form.get('content')?.hasError('required')) {
+              Conteúdo é obrigatório.
+            } @else if (form.get('content')?.hasError('minlength')) {
+              Conteúdo deve ter pelo menos 10 caracteres.
+            }
+          </p>
+        }
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="form.invalid || loading()"
+        class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+      >
+        @if (loading()) {
+          Salvando...
+        } @else {
+          Salvar alterações
+        }
+      </button>
+    </form>
+  </div>
+</div>
